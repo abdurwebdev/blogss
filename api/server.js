@@ -1,26 +1,42 @@
 const express = require('express');
 const app = express();
 const db = require('./config/db');
-const cors = require('cors');
 const userModel = require('./models/user');
-db();
 require('dotenv').config();
-app.use(cors({
-  origin: 'https://blogss-8yf8.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
 
+// ✅ Connect to DB
+db();
+
+// ✅ Middleware to parse JSON body
 app.use(express.json());
-app.get("/",(req,res)=>{
-  res.send("hello")
-})
 
-app.post('/api/register',async (req,res)=>{
-  let {name} = req.body;
-  let createdUser = await userModel.create({
-    name
-  })
-})
+// ✅ Basic test route
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 
-app.listen(3000);
+// ✅ POST /api/register route
+app.post('/api/register', async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    // Optional: basic validation
+    if (!name) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    const createdUser = await userModel.create({ name });
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: createdUser
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong", error: err.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
