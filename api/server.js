@@ -3,6 +3,8 @@ const app = express();
 const db = require('./config/db');
 const userModel = require('./models/user');
 require('dotenv').config();
+const cors = require('cors');
+app.use(cors());
 
 // ✅ Connect to DB
 db();
@@ -12,8 +14,12 @@ app.use(express.json());
 
 // ✅ Basic test route
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.send("hellosssssssss");
 });
+
+app.get('/home',(req,res)=>{
+  res.send('Home');
+})
 
 // ✅ POST /api/register route
 app.post('/api/register', async (req, res) => {
