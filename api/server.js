@@ -4,7 +4,10 @@ const db = require('./config/db');
 const userModel = require('./models/user');
 require('dotenv').config();
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  origin: 'https://blogss-8722.vercel.app',
+  credentials: true
+}));
 
 // ✅ Connect to DB
 db();
