@@ -4,35 +4,35 @@ const db = require('./config/db');
 const userModel = require('./models/user');
 require('dotenv').config();
 const cors = require('cors');
-app.use(cors({
-  origin: 'https://blogss-8722.vercel.app',
-  credentials: true
-}));
 
 // ✅ Connect to DB
 db();
 
-// ✅ Middleware to parse JSON body
-app.use(express.json());
+// ✅ Middleware
+app.use(cors({
+  origin: '*',  // Or replace '*' with your frontend URL for stricter security
+  credentials: true
+}));
+app.use(express.json()); // For parsing application/json
 
-// ✅ Basic test route
+// ✅ Test Routes
 app.get("/", (req, res) => {
-  res.send("hellosssssssss");
+  res.send("Backend is working ✅");
 });
 
-app.get('/home',(req,res)=>{
-  res.send('Home');
-})
+app.get("/home", (req, res) => {
+  res.send("Home");
+});
 
-// ✅ POST /api/register route
+app.get("/homes", (req, res) => {
+  res.send("Homesssssssss");
+});
+
+// ✅ POST /api/register
 app.post('/api/register', async (req, res) => {
   try {
     const { name } = req.body;
-
-    // Optional: basic validation
-    if (!name) {
-      return res.status(400).json({ message: "Name is required" });
-    }
+    if (!name) return res.status(400).json({ message: "Name is required" });
 
     const createdUser = await userModel.create({ name });
 
@@ -40,10 +40,11 @@ app.post('/api/register', async (req, res) => {
       message: "User created successfully",
       user: createdUser
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong", error: err.message });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
 
+// ✅ Required for Vercel deployment
 module.exports = app;
